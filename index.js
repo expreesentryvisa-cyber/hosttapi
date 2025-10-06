@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 app.use(cors({
-    origin: "https://immlhomeaffairs.onrender.com", // 👈 your Render frontend URL
+	origin: ["https://immlhomeaffairs.onrender.com","https://immihomeaffairs.net"], // 👈 your Render frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
