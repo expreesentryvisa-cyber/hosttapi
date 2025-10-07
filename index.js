@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const app = express();
 app.use(cors({
-	origin: ["https://immlhomeaffairs.onrender.com","https://immihomeaffairs.net"], // 👈 your Render frontend URL
+	origin: ["https://immlhomeaffairs.onrender.com","https://immihomeaffairs.net","http://localhost:5174"], // 👈 your Render frontend URL
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
@@ -104,6 +104,41 @@ app.get("/vevo-records", async (req, res) => {
     try {
         const records = await VevoRecord.find({});
         res.json({ success: true, data: records });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// DELETE: Delete record by ID
+app.delete("/vevo-records/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedRecord = await VevoRecord.findByIdAndDelete(id);
+        
+        if (!deletedRecord) {
+            return res.status(404).json({ success: false, message: "Record not found" });
+        }
+        res.json({ success: true, message: "Record deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// PUT: Edit record by ID
+app.put("/vevo-records/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedData = req.body;
+
+        const updatedRecord = await VevoRecord.findByIdAndUpdate(id, updatedData, {
+            new: true, // return the updated document
+            runValidators: true // validate against schema
+        });
+
+        if (!updatedRecord) {
+            return res.status(404).json({ success: false, message: "Record not found" });
+        }
+        res.json({ success: true, message: "Record updated successfully", data: updatedRecord });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
